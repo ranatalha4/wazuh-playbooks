@@ -1,0 +1,41 @@
+<!--
+  custom_virustotal_rules.xml — rules for custom-virustotal-ip.py
+  Location (manager): /var/ossec/etc/rules/custom_virustotal_rules.xml
+  Rule IDs: 100300-100304 (custom range 100000-120000)
+
+  Note: with <log_alert_level>8 in ossec.conf, only levels >= 8 are stored as alerts.
+  Levels 3 (clean/unknown) are only visible in wazuh-logtest.
+-->
+<group name="custom_virustotal,threat_intel,">
+
+  <rule id="100300" level="0">
+    <decoded_as>json</decoded_as>
+    <field name="integration">^custom-virustotal-ip$</field>
+    <description>Custom VirusTotal IP lookup result</description>
+  </rule>
+
+  <rule id="100301" level="3">
+    <if_sid>100300</if_sid>
+    <field name="vt.verdict">^clean$</field>
+    <description>VirusTotal: $(vt.ip) has no detections</description>
+  </rule>
+
+  <rule id="100302" level="3">
+    <if_sid>100300</if_sid>
+    <field name="vt.verdict">^unknown$</field>
+    <description>VirusTotal: $(vt.ip) not found in VirusTotal</description>
+  </rule>
+
+  <rule id="100303" level="8">
+    <if_sid>100300</if_sid>
+    <field name="vt.verdict">^suspicious$</field>
+    <description>VirusTotal: suspicious IP $(vt.ip) ($(vt.malicious) malicious / $(vt.suspicious) suspicious) seen in FortiGate traffic</description>
+  </rule>
+
+  <rule id="100304" level="12">
+    <if_sid>100300</if_sid>
+    <field name="vt.verdict">^malicious$</field>
+    <description>VirusTotal: malicious IP $(vt.ip) ($(vt.malicious) engines) seen in FortiGate traffic</description>
+  </rule>
+
+</group>

@@ -1,0 +1,7 @@
+{
+  "id": "1760000000.12345",
+  "timestamp": "2026-10-12T16:00:00.000+0400",
+  "rule": {"id": "81618", "level": 8, "description": "Fortigate: Traffic to malicious destination (test)", "groups": ["fortigate", "firewall", "traffic"]},
+  "agent": {"id": "000", "name": "wazuh"},
+  "data": {"srcip": "192.0.2.10", "dstip": "8.8.8.8", "action": "deny"}
+}
