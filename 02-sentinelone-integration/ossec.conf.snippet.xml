@@ -1,0 +1,18 @@
+<!-- Place inside <ossec_config> in /var/ossec/etc/ossec.conf (manager) -->
+
+<!-- Runs the S1 pull script every minute -->
+<wodle name="command">
+  <disabled>no</disabled>
+  <command>/var/ossec/framework/python/bin/python3 /var/ossec/integrations/sentinel_one.py</command>
+  <interval>1m</interval>
+  <ignore_output>yes</ignore_output>
+  <run_on_start>yes</run_on_start>
+  <!-- 0 = no timeout. Recommended: 50 (seconds, below the 1m interval) -->
+  <timeout>50</timeout>
+</wodle>
+
+<!-- Reads the JSON the script writes -->
+<localfile>
+  <log_format>json</log_format>
+  <location>/var/log/sentinelone.json</location>
+</localfile>
