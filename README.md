@@ -7,12 +7,12 @@ How-to guides and redacted configs for our Wazuh SIEM.
 
 ## Guides
 
-| # | Folder | What it covers |
-|---|---|---|
-| 01 | [virustotal-integration](01-virustotal-integration/) | Custom VirusTotal lookup on FortiGate alerts |
-| 02 | [sentinelone-integration](02-sentinelone-integration/) | Pulling SentinelOne threats into Wazuh |
-| 03 | [custom-rules-decoders](03-custom-rules-decoders/) | Writing, testing and deploying custom rules/decoders |
-| 04 | [cdb-lists](04-cdb-lists/) | Adding CDB lists (IOC lookups) and using them in rules |
+| # | Folder | What it covers | Status |
+|---|---|---|---|
+| 01 | [virustotal-integration](01-virustotal-integration/) | Custom VirusTotal IP lookup on FortiGate alerts | ✅ Script + rules written and tested (mocked API); server deployment pending |
+| 02 | [sentinelone-integration](02-sentinelone-integration/) | Pulling SentinelOne threats into Wazuh | 📝 Guide done; live script to be added (redacted) |
+| 03 | [custom-rules-decoders](03-custom-rules-decoders/) | Writing, testing and deploying custom rules/decoders | 📝 Guide done; live rules/decoders to be added |
+| 04 | [cdb-lists](04-cdb-lists/) | Adding CDB lists (IOC lookups) and using them in rules | 📝 Guide done; example list included |
 
 ## Rules for this repo
 
