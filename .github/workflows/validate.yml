@@ -1,0 +1,56 @@
+name: validate
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # full history, so gitleaks scans every commit
+
+      - name: Install tools
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq libxml2-utils shellcheck
+
+      - name: XML well-formedness (rules, decoders, snippets)
+        run: |
+          set -e
+          shopt -s nullglob globstar
+          for f in **/*.xml; do
+            { echo '<root>'; cat "$f"; echo '</root>'; } | xmllint --noout - && echo "OK  $f"
+          done
+
+      - name: JSON validity
+        run: |
+          set -e
+          shopt -s nullglob globstar
+          for f in **/*.json; do python3 -m json.tool "$f" > /dev/null && echo "OK  $f"; done
+
+      - name: Duplicate rule IDs / decoder names
+        run: |
+          shopt -s nullglob
+          rules=(03-custom-rules-decoders/rules/*.xml)
+          decs=(03-custom-rules-decoders/decoders/*.xml)
+          if [ ${#rules[@]} -gt 0 ]; then
+            dup=$(grep -ohP '<rule id="\K\d+' "${rules[@]}" | sort | uniq -d)
+            [ -z "$dup" ] || { echo "Duplicate rule IDs: $dup"; exit 1; }
+            bad=$(grep -ohP '<rule id="\K\d+' "${rules[@]}" | awk '$1<100000 || $1>120000')
+            [ -z "$bad" ] || { echo "Rule IDs outside 100000-120000: $bad"; exit 1; }
+          fi
+          if [ ${#decs[@]} -gt 0 ]; then
+            dup=$(grep -ohP '<decoder name="\K[^"]+' "${decs[@]}" | sort | uniq -d)
+            [ -n "$dup" ] && echo "Note: repeated decoder names (OK for parent/child sibling decoders): $dup"
+          fi
+          echo "ID check done"
+
+      - name: ShellCheck
+        run: shellcheck scripts/*.sh
+
+      - name: Leak check (internal IPs, credentials, company names)
+        run: ./scripts/leak-check.sh
+
+      - name: Gitleaks (full history)
+        run: docker run --rm -v "$PWD":/repo zricethezav/gitleaks:latest detect --source /repo -v
