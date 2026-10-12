@@ -5,7 +5,6 @@
 # Company and internal names are NOT stored in this repo. Put them in an untracked
 # .leakcheck.local at the repo root (see README), or pass them as env vars:
 #   COMPANY='acme|acmecorp'  EXTRA='siem01|corp\.local'  ./scripts/leak-check.sh
-# In CI, set COMPANY as a repository secret.
 set -u
 
 [ -f .leakcheck.local ] && . ./.leakcheck.local

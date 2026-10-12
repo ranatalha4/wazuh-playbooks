@@ -35,7 +35,6 @@ Company names and internal domains are never stored in the repo. Put them in an 
 COMPANY='yourcompany|yourbrand'           # names the leak check must catch
 INTERNAL_DOMAINS='corp\.example|example\.local'   # domains collect.sh replaces with <INTERNAL_HOST>
 ```
-In CI, add `COMPANY` as a repository secret and pass it to the leak-check step.
 
 ## CI checks (every push)
 
