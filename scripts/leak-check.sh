@@ -9,13 +9,16 @@ COMPANY="${COMPANY:-}"
 EXTRA="${EXTRA:-}"
 
 PATTERN='(^|[^0-9])(10\.[0-9]+\.[0-9]+\.[0-9]+|172\.(1[6-9]|2[0-9]|3[01])\.[0-9]+\.[0-9]+|192\.168\.[0-9]+\.[0-9]+)'
-PATTERN="$PATTERN"'|(password|passwd|secret|token|api[_-]?key)["'"'"']?[[:space:]]*[:=]'
+# credential assignments with a real-looking value: quoted (>=4 chars) or bare long token (>=20 chars)
+PATTERN="$PATTERN"'|(password|passwd|secret|token|api[_-]?key)["'"'"']?[[:space:]]*[:=][[:space:]]*(["'"'"'][^"'"'"'<$ ]{4,}|[A-Za-z0-9_+/=-]{20,})'
+# XML credential tags with any value (e.g. <api_key>abc</api_key> in ossec.conf)
+PATTERN="$PATTERN"'|<(api_key|password|token|key)>[^<]+</'
 PATTERN="$PATTERN"'|BEGIN [A-Z ]*PRIVATE KEY'
 PATTERN="$PATTERN|$COMPANY"
 [ -n "$EXTRA" ] && PATTERN="$PATTERN|$EXTRA"
 
 # Placeholders that are safe
-ALLOW='REDACTED|<[A-Za-z_ -]+>|INTERNAL_(IP|HOST)'
+ALLOW='REDACTED|<(your|org|real|INTERNAL)[A-Za-z_ -]*>'
 
 hits=$(grep -rniE --exclude-dir=.git --exclude-dir=.github \
         --exclude=leak-check.sh --exclude=collect.sh "$PATTERN" . | grep -vE "$ALLOW" || true)
