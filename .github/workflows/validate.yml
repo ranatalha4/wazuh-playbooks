@@ -50,6 +50,8 @@ jobs:
         run: shellcheck scripts/*.sh
 
       - name: Leak check (internal IPs, credentials, company names)
+        env:
+          COMPANY: ${{ secrets.COMPANY }}
         run: ./scripts/leak-check.sh
 
       - name: Gitleaks (full history)

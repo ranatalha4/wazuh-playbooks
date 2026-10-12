@@ -1,6 +1,6 @@
 # Wazuh Playbooks
 
-How-to guides and redacted configs for our Wazuh SIEM.
+Practical how-to guides and redacted configs for running Wazuh in production: third-party integrations, custom detections and IOC lookups, with a redaction pipeline and CI checks that keep secrets and internal data out of the repo.
 
 > **Version:** Wazuh **4.14.0**, all-in-one (manager + indexer + dashboard on one host).
 > Paths and commands are for 4.14.0. Anything that changes in a multi-node cluster is marked **🔁 Cluster note**.
@@ -16,7 +16,6 @@ How-to guides and redacted configs for our Wazuh SIEM.
 
 ## Rules for this repo
 
-- **Private repo only.** Company org, security team access.
 - **No secrets.** API keys, tokens, passwords, certs, `client.keys`, `internal_users.yml` never get committed.
 - **No real data.** No alerts, archives or log files.
 - Internal IPs and hostnames are replaced with `<INTERNAL_IP>` / `<INTERNAL_HOST>`.
@@ -30,6 +29,13 @@ sudo ./scripts/collect.sh     # copies live files out of /var/ossec and redacts 
 ./scripts/leak-check.sh       # must pass before commit
 ```
 Redaction is pattern-based. **It does not replace a manual review.**
+
+Company names and internal domains are never stored in the repo. Put them in an untracked `.leakcheck.local` at the repo root (it is gitignored):
+```bash
+COMPANY='yourcompany|yourbrand'           # names the leak check must catch
+INTERNAL_DOMAINS='corp\.example|example\.local'   # domains collect.sh replaces with <INTERNAL_HOST>
+```
+In CI, add `COMPANY` as a repository secret and pass it to the leak-check step.
 
 ## CI checks (every push)
 

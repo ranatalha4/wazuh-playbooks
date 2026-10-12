@@ -28,3 +28,10 @@ ar.conf
 
 # --- Local staging ---
 _raw/
+
+# --- Local leak-check config (real company names / domains): never commit ---
+.leakcheck.local
+
+# --- Python build output ---
+__pycache__/
+*.pyc

@@ -12,6 +12,10 @@
 
 set -euo pipefail
 
+# Internal domains to redact (e.g. INTERNAL_DOMAINS='corp\.example|example\.local'), from env or .leakcheck.local
+[ -f .leakcheck.local ] && . ./.leakcheck.local
+INTERNAL_DOMAINS="${INTERNAL_DOMAINS:-}"
+
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
 OSSEC=/var/ossec
 
@@ -53,7 +57,7 @@ find "$REPO" -type f \( -name '*.py' -o -name '*.xml' -o -name '*.json' -o -name
     -e 's#\b10\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\b#<INTERNAL_IP>#g' \
     -e 's#\b192\.168\.[0-9]{1,3}\.[0-9]{1,3}\b#<INTERNAL_IP>#g' \
     -e 's#\b172\.(1[6-9]|2[0-9]|3[01])\.[0-9]{1,3}\.[0-9]{1,3}\b#<INTERNAL_IP>#g' \
-    -e 's#[A-Za-z0-9.-]*example\.(ae|cr)\b#<INTERNAL_HOST>#Ig' \
+    ${INTERNAL_DOMAINS:+-e "s#[A-Za-z0-9.-]*\\.(${INTERNAL_DOMAINS})\\b#<INTERNAL_HOST>#Ig"} \
     "$f"
 done
 
